@@ -1,114 +1,82 @@
-import React from "react";
-import { useState } from "react";
-import { Validation } from "./Validation";
+import React, { useRef, useState } from "react";
 import "../styles/App.css";
 
 const App = () => {
-  const [details, setDetails] = useState({
-    username: "",
-    email: "",
-    password: "",
-    contactNo: "",
-  });
+  const inputUsernameRef = useRef("");
+  const inputEmailRef = useRef("");
+  const inputPasswordRef = useRef("");
+  const inputMoNumberRef = useRef("");
+  const [usernameError, setUsernameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [moNumberError, setMoNumberError] = useState(false);
+  const [isSubmitable, setIsSubmitable] = useState(false);
 
-  const [error, setError] = useState({
-    username: "",
-    email: "",
-    password: "",
-    contactNo: "",
-  });
+  const formSubmitHandler = (event) => {
+    event.preventDefault();
+    const username = inputUsernameRef.current.value;
+    const email = inputEmailRef.current.value;
+    const password = inputPasswordRef.current.value;
+    const moNumber = inputMoNumberRef.current.value;
+    console.log(username, email, password, moNumber);
 
-  const [flag, setFlag] = useState(false);
-
-  const formSubmit = (e) => {
-    e.preventDefault();
-    const validationResult = Validation(details);
-    if (Object.keys(validationResult).length > 0) {
-      setError({...error, ...validationResult});
-      console.log(error)
-      setDetails({
-        username: "",
-        email: "",
-        password: "",
-        contactNo: "",
-      });
-      return;
-    } else {
-      setFlag(true);
-      setDetails({
-        username: "",
-        email: "",
-        password: "",
-        contactNo: "",
-      });
-      setError({
-        username: "",
-        email: "",
-        password: "",
-        contactNo: "",
-      });
+    if (username === "") {
+      setUsernameError(true);
     }
-  };
 
-  const handleChange = (e) => {
-    setDetails({ ...details, [e.target.name]: e.target.value });
+    if (email === "") {
+      setEmailError(true);
+    }
+
+    if (password.length < 4) {
+      setPasswordError(true);
+    }
+
+    if (moNumber.length !== 10) {
+      setMoNumberError(true);
+    }
+
+    if (
+      usernameError === false &&
+      emailError === false &&
+      moNumberError === false &&
+      passwordError === false
+    ) {
+      setIsSubmitable(true);
+      inputUsernameRef.current.value = "";
+      inputEmailRef.current.value = "";
+      inputMoNumberRef.current.value = "";
+      inputPasswordRef.current.value = "";
+    }
   };
 
   return (
     <div id="main">
-      {flag ? <h3 className="success-alert">Registered Successfullly</h3> : ""}
-      <form onSubmit={formSubmit}>
+      {isSubmitable && (
+        <h3 className="success-alert">Registered Successfullly</h3>
+      )}
+      <form onSubmit={formSubmitHandler}>
         <h1>Registeration Form</h1>
         <section>
           <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            value={details.username}
-            onChange={handleChange}
-          />
-          {error.username.length > 0 ? (
-            <p className="username-error">{error.username.length}</p>
-          ) : (
-            ""
+          <input type="text" name="username" ref={inputUsernameRef} />
+          {usernameError && (
+            <p className="username-error">{"Invalid- Username"}</p>
           )}
           <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={details.email}
-            onChange={handleChange}
-          />
-          {error.email.length > 0 ? (
-            <p className="email-error">{error.email}</p>
-          ) : (
-            ""
-          )}
+          <input type="email" name="email" ref={inputEmailRef} />
+          {emailError && <p className="email-error">{"Invalid-Email"}</p>}
           <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={details.password}
-            onChange={handleChange}
-          />
-          {error.password.length > 0 ? (
-            <p className="password-error">{error.password}</p>
-          ) : (
-            ""
+          <input type="password" name="password" ref={inputPasswordRef} />
+          {passwordError && (
+            <p className="password-error">{"Invalid-Password"}</p>
           )}
           <label>Contact Number</label>
-          <input
-            type="number"
-            name="contactNo"
-            value={details.contactNo}
-            onChange={handleChange}
-          />
-          {error.contactNo.length > 0 ? (
-            <p className="contactNo-error">{error.contactNo}</p>
-          ) : (
-            ""
+          <input type="number" name="contactNo" ref={inputMoNumberRef} />
+          {moNumberError && (
+            <p className="contactNo-error">{"Invalid-Mobile number"}</p>
           )}
-          <button type="submit">Submit</button>
+          <button>Submit</button>
         </section>
       </form>
     </div>
@@ -116,3 +84,5 @@ const App = () => {
 };
 
 export default App;
+
+react-form
