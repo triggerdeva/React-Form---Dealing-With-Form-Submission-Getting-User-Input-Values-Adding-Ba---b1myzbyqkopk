@@ -84,5 +84,3 @@ const App = () => {
 };
 
 export default App;
-
-react-form
